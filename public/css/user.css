@@ -102,6 +102,114 @@ body {
     align-items: center;
     gap: 0.75rem;
     text-decoration: none;
+    color: var(--foreground);
+}
+
+/* Override Bootstrap Defaults for Dark Mode */
+.card {
+    background-color: var(--card) !important;
+    color: var(--foreground) !important;
+    border: 1px solid var(--border) !important;
+    transition: all 0.3s ease;
+}
+
+.text-muted {
+    color: var(--muted-foreground) !important;
+}
+
+.bg-light {
+    background-color: var(--background) !important;
+}
+
+.table {
+    color: var(--foreground) !important;
+}
+
+/* Modern Card Layouts */
+.modern-card {
+    background: var(--card);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.modern-card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+/* Timeline View */
+.timeline-item {
+    padding: 1rem;
+    border-left: 2px solid var(--primary);
+    margin-left: 1rem;
+    position: relative;
+    background: var(--background);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin-bottom: 1rem;
+    border-top: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+}
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 1.25rem;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--primary);
+}
+
+/* Ticket Card */
+.ticket-card {
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+.ticket-header {
+    background: var(--card);
+    padding: 1rem;
+    border-bottom: 2px dashed var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.ticket-body {
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+/* Gallery Grid */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+}
+.gallery-item {
+    border-radius: var(--radius);
+    overflow: hidden;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    aspect-ratio: 1;
+}
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+.gallery-item:hover img {
+    transform: scale(1.05);
 }
 
 .logo-icon {

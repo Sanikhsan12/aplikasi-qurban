@@ -307,499 +307,168 @@
             <!-- RIGHT COLUMN: Tables and Info (Col-LG-8) -->
             <div class="col-lg-8">
                 {{-- Jadwal Pelaksanaan Kurban --}}
-                <div class="card">
-                    {{-- DESKTOP VIEW --}}
-<div class="d-none d-lg-block">
-
-    {{-- Jadwal Pelaksanaan Kurban --}}
-    <div class="card mb-4">
-        <div class="card-header">
-            <h3 class="card-title mb-1">Jadwal Pelaksanaan Kurban</h3>
-            <p class="muted mb-0">Informasi tanggal, waktu, dan lokasi penyembelihan.</p>
-        </div>
-
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th>No</th>
-                        <th>Tanggal Pendaftaran</th>
-                        <th>Tanggal Penutupan</th>
-                        <th>Lokasi</th>
-                        <th>Jadwal Penyembelihan</th>
-                        <th>Ketua Pelaksana</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    @forelse ($pelaksanaanKurban as $item)
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ \Carbon\Carbon::parse($item->Tanggal_Pendaftaran)->format('d M Y') }}</td>
-                            <td>{{ \Carbon\Carbon::parse($item->Tanggal_Penutupan)->format('d M Y') }}</td>
-                            <td>{{ $item->Lokasi }}</td>
-                            <td>{{ \Carbon\Carbon::parse($item->Penyembelihan)->format('d M Y') }}</td>
-                            <td>{{ $item->Ketuplak }}</td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6" class="text-center text-muted py-4">
-                                Jadwal penyembelihan belum ditetapkan.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    {{-- Status Pembayaran --}}
-    <div class="card mb-4">
-        <div class="card-header">
-            <h3 class="card-title mb-1">Status Pembayaran</h3>
-            <p class="muted mb-0">Status pembayaran dan informasi transaksi.</p>
-        </div>
-
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th>No</th>
-                        <th>Nama Donatur</th>
-                        <th>Jenis Hewan</th>
-                        <th>Total Hewan</th>
-                        <th>Total Harga</th>
-                        <th>Tipe</th>
-                        <th>Status</th>
-                        <th>Bukti</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    @forelse ($detailPembayaran as $row)
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $row->user->name ?? '-' }}</td>
-                            <td>{{ $row->jenis_hewan ?? '-' }}</td>
-                            <td>{{ $row->total_hewan ?? '-' }}</td>
-                            <td>
-                                Rp {{ number_format($row->total_harga, 0, ',', '.') }}
-                            </td>
-                            <td>{{ $row->tipe_pendaftaran ?? '-' }}</td>
-
-                            <td>
-                                <span class="status-badge status-{{ strtolower($row->status ?? 'pending') }}">
-                                    {{ $row->status ?? '-' }}
-                                </span>
-                            </td>
-
-                            <td>
-                                @if ($row->bukti_pembayaran)
-                                    <img src="{{ asset('storage/' . $row->bukti_pembayaran) }}"
-                                        class="desktop-thumbnail"
-                                        alt="Bukti Pembayaran">
-                                @else
-                                    <span class="text-muted">Belum ada</span>
-                                @endif
-                            </td>
-                        </tr>
-
-                        @if ($row->alasan_penolakan)
-                            <tr>
-                                <td colspan="8">
-                                    <div class="alert alert-danger mb-0">
-                                        <strong>Alasan Penolakan:</strong>
-                                        {{ $row->alasan_penolakan }}
+                <div class="mb-4">
+                    <h3 class="section-title mb-1" style="font-size: 1.25rem; color: var(--foreground);">Jadwal Pelaksanaan</h3>
+                    <p class="text-muted mb-3">Informasi tanggal, waktu, dan lokasi penyembelihan.</p>
+                    <div class="row g-3">
+                        @forelse ($pelaksanaanKurban as $item)
+                            <div class="col-md-6">
+                                <div class="modern-card p-3 h-100 mb-0">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; background-color: var(--primary) !important;">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="mb-0" style="font-weight: 600; font-size: 1rem; color: var(--foreground);">{{ $item->Lokasi }}</h5>
+                                            <small class="text-muted">Ketua: {{ $item->Ketuplak }}</small>
+                                        </div>
                                     </div>
-                                </td>
-                            </tr>
-                        @endif
-
-                    @empty
-                        <tr>
-                            <td colspan="8" class="text-center text-muted py-4">
-                                Tidak ada riwayat transaksi.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    {{-- Dokumentasi Penyembelihan --}}
-    <div class="card mb-4">
-        <div class="card-header">
-            <h3 class="card-title mb-1">Dokumentasi Penyembelihan</h3>
-            <p class="muted mb-0">Dokumentasi penyembelihan hewan kurban.</p>
-        </div>
-
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th>No</th>
-                        <th>Donatur</th>
-                        <th>Jenis Hewan</th>
-                        <th>Status</th>
-                        <th>Tanggal</th>
-                        <th>Berat</th>
-                        <th>Daging</th>
-                        <th>Dokumentasi</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    @forelse ($penyembelihan as $row)
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $row->order->user->name ?? '-' }}</td>
-                            <td>{{ $row->order->jenis_hewan ?? '-' }}</td>
-
-                            <td>
-                                <span class="status-badge status-{{ strtolower($row->status ?? 'pending') }}">
-                                    {{ $row->status ?? '-' }}
-                                </span>
-                            </td>
-
-                            <td>
-                                {{ \Carbon\Carbon::parse($row->pelaksanaan->Penyembelihan)->format('d M Y') }}
-                            </td>
-
-                            <td>
-                                {{ $row->order->berat_hewan ? number_format($row->order->berat_hewan, 1) . ' kg' : '-' }}
-                            </td>
-
-                            <td>
-                                {{ $row->order->perkiraan_daging ? number_format($row->order->perkiraan_daging, 1) . ' kg' : '-' }}
-                            </td>
-
-                            <td>
-                                @if ($row->dokumentasi_penyembelihan)
-                                    <img src="{{ asset('storage/' . $row->dokumentasi_penyembelihan) }}"
-                                        class="desktop-thumbnail"
-                                        alt="Dokumentasi">
-                                @else
-                                    <span class="text-muted">Belum ada</span>
-                                @endif
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="8" class="text-center text-muted py-4">
-                                Tidak ada data penyembelihan.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    {{-- Distribusi Daging --}}
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title mb-1">Riwayat Distribusi Daging</h3>
-            <p class="muted mb-0">Catatan distribusi daging kurban.</p>
-        </div>
-
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th>No</th>
-                        <th>Tanggal Penyembelihan</th>
-                        <th>Google Drive</th>
-                        <th>Dokumentasi</th>
-                        <th>Tanggal Upload</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    @forelse ($distribusi as $item)
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-
-                            <td>
-                                {{ \Carbon\Carbon::parse($item->pelaksanaan->Penyembelihan)->format('d M Y') }}
-                            </td>
-
-                            <td>
-                                @if ($item->link_gdrive)
-                                    <a href="{{ $item->link_gdrive }}"
-                                        target="_blank"
-                                        class="btn btn-sm btn-primary">
-                                        <i class="fas fa-external-link-alt"></i>
-                                        Buka Drive
-                                    </a>
-                                @else
-                                    N/A
-                                @endif
-                            </td>
-
-                            <td>
-                                @if ($item->dokumentasi && count($item->dokumentasi) > 0)
-                                    <button type="button"
-                                        class="btn btn-dark btn-sm"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#imageModal{{ $item->id }}">
-
-                                        <i class="fas fa-images"></i>
-                                        {{ count($item->dokumentasi) }} Gambar
-                                    </button>
-                                @else
-                                    -
-                                @endif
-                            </td>
-
-                            <td>
-                                {{ \Carbon\Carbon::parse($item->created_at)->format('d M Y') }}
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="text-center text-muted py-4">
-                                Belum ada riwayat distribusi daging.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-</div>
-                    {{-- Mobile Card View --}}
-                    <div class="mobile-card-view">
-                        <div class="card-header mb-3">
-                            <h3 class="card-title">Jadwal Pelaksanaan Kurban</h3>
-                            <p class="muted">Informasi tanggal, waktu, dan lokasi penyembelihan.</p>
-                        </div>
-                        <div class="data-grid">
-                            @forelse ($pelaksanaanKurban as $pelaksanaan)
-                                <div class="data-card">
-                                    <div class="data-row">
-                                        <span class="data-label">Tanggal Pendaftaran</span>
-                                        <span
-                                            class="data-value">{{ \Carbon\Carbon::parse($pelaksanaan->Tanggal_Pendaftaran)->format('d M Y') }}</span>
+                                    <div class="timeline-item mb-2 p-2">
+                                        <small class="text-muted d-block">Pendaftaran</small>
+                                        <strong style="color: var(--foreground);">{{ \Carbon\Carbon::parse($item->Tanggal_Pendaftaran)->format('d M') }} - {{ \Carbon\Carbon::parse($item->Tanggal_Penutupan)->format('d M Y') }}</strong>
                                     </div>
-                                    <div class="data-row">
-                                        <span class="data-label">Tanggal Penutupan</span>
-                                        <span
-                                            class="data-value">{{ \Carbon\Carbon::parse($pelaksanaan->Tanggal_Penutupan)->format('d M Y') }}</span>
-                                    </div>
-                                    <div class="data-row">
-                                        <span class="data-label">Lokasi</span>
-                                        <span class="data-value">{{ $pelaksanaan->Lokasi }}</span>
-                                    </div>
-                                    <div class="data-row">
-                                        <span class="data-label">Jadwal Penyembelihan</span>
-                                        <span
-                                            class="data-value">{{ \Carbon\Carbon::parse($pelaksanaan->Penyembelihan)->format('d M Y') }}</span>
-                                    </div>
-                                    <div class="data-row">
-                                        <span class="data-label">Ketua Pelaksana</span>
-                                        <span class="data-value">{{ $pelaksanaan->Ketuplak }}</span>
+                                    <div class="timeline-item mb-0 p-2">
+                                        <small class="text-muted d-block">Penyembelihan</small>
+                                        <strong style="color: var(--foreground);">{{ \Carbon\Carbon::parse($item->Penyembelihan)->format('d M Y') }}</strong>
                                     </div>
                                 </div>
-                            @empty
-                                <div class="data-card text-center text-muted">Jadwal penyembelihan belum
-                                    ditetapkan.</div>
-                            @endforelse
-                        </div>
+                            </div>
+                        @empty
+                            <div class="col-12">
+                                <div class="modern-card text-center p-4 mb-0">
+                                    <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                                    <p class="text-muted mb-0">Jadwal penyembelihan belum ditetapkan oleh panitia.</p>
+                                </div>
+                            </div>
+                        @endforelse
                     </div>
                 </div>
 
                 {{-- Status Pembayaran --}}
-                <div class="card">
-
-                    {{-- Mobile Card View --}}
-                    <div class="mobile-card-view">
-                        <div class="card-header mb-3">
-                            <h3 class="card-title">Status Pembayaran</h3>
-                            <p class="muted">Status pembayaran dan informasi transaksi.</p>
-                        </div>
-                        <div class="data-grid">
-                            @forelse ($detailPembayaran as $row)
-                                <div class="data-card">
-                                    <div class="data-row">
-                                        <span class="data-label">Nama Donatur</span>
-                                        <span class="data-value">{{ $row->user->name ?? '-' }}</span>
-                                    </div>
-                                    <div class="data-row">
-                                        <span class="data-label">Jenis Hewan</span>
-                                        <span class="data-value">{{ $row->jenis_hewan ?? '-' }}</span>
-                                    </div>
-                                    <div class="data-row">
-                                        <span class="data-label">Total Hewan</span>
-                                        <span class="data-value">{{ $row->total_hewan ?? '-' }}</span>
-                                    </div>
-                                    <div class="data-row">
-                                        <span class="data-label">Total Harga</span>
-                                        <span class="data-value">Rp.
-                                            {{ number_format($row->total_harga, 0, ',', '.') ?? '-' }}</span>
-                                    </div>
-                                    <div class="data-row">
-                                        <span class="data-label">Tipe Pendaftaran</span>
-                                        <span class="data-value">{{ $row->tipe_pendaftaran ?? '-' }}</span>
-                                    </div>
-                                    <div class="data-row">
-                                        <span class="data-label">Status</span>
-                                        <span class="data-value">
-                                            <span
-                                                class="status-badge status-{{ strtolower($row->status ?? 'pending') }}">
-                                                {{ $row->status ?? '-' }}
-                                            </span>
+                <div class="mb-4">
+                    <h3 class="section-title mb-1" style="font-size: 1.25rem; color: var(--foreground);">Status Transaksi Saya</h3>
+                    <p class="text-muted mb-3">Pantau status pendaftaran dan pembayaran kurban Anda.</p>
+                    <div class="row g-3">
+                        @forelse ($detailPembayaran as $row)
+                            <div class="col-12">
+                                <div class="ticket-card mb-0">
+                                    <div class="ticket-header">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <i class="fas fa-receipt" style="color: var(--primary);"></i>
+                                            <span style="font-weight: 600; color: var(--foreground);">{{ $row->jenis_hewan ?? '-' }} ({{ $row->total_hewan ?? '-' }} Ekor)</span>
+                                        </div>
+                                        <span class="status-badge status-{{ strtolower($row->status ?? 'pending') }}">
+                                            {{ $row->status ?? '-' }}
                                         </span>
                                     </div>
-                                    <div class="data-row">
-                                        <span class="data-label">Bukti Pembayaran</span>
-                                        <span class="data-value">
+                                    <div class="ticket-body">
+                                        <div>
+                                            <small class="text-muted d-block">Total Tagihan</small>
+                                            <strong style="font-size: 1.1rem; color: var(--foreground);">Rp {{ number_format($row->total_harga, 0, ',', '.') }}</strong>
+                                        </div>
+                                        <div>
+                                            <small class="text-muted d-block">Tipe Pendaftaran</small>
+                                            <strong style="color: var(--foreground);">{{ $row->tipe_pendaftaran ?? '-' }}</strong>
+                                        </div>
+                                        <div class="col-span-2 mt-2" style="grid-column: span 2;">
                                             @if ($row->bukti_pembayaran)
-                                                <img src="{{ asset('storage/' . $row->bukti_pembayaran) }}"
-                                                    alt="Bukti Pembayaran" style="max-width: 80px;">
+                                                <div class="d-flex align-items-center gap-3">
+                                                    <img src="{{ asset('storage/' . $row->bukti_pembayaran) }}" alt="Bukti Pembayaran" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border);">
+                                                    <span class="text-success" style="color: var(--primary) !important;"><i class="fas fa-check-circle me-1"></i> Bukti Terunggah</span>
+                                                </div>
                                             @else
-                                                <span class="text-muted">Belum ada foto</span>
+                                                <div class="alert alert-warning py-2 mb-0" style="font-size: 0.9rem;">
+                                                    <i class="fas fa-exclamation-triangle me-1"></i> Harap segera unggah bukti pembayaran.
+                                                </div>
                                             @endif
-                                        </span>
+                                            @if ($row->alasan_penolakan)
+                                                <div class="alert alert-danger py-2 mt-2 mb-0" style="font-size: 0.9rem;">
+                                                    <strong>Ditolak:</strong> {{ $row->alasan_penolakan }}
+                                                </div>
+                                            @endif
+                                        </div>
                                     </div>
-                                    @if ($row->alasan_penolakan)
-                                        <div class="data-row">
-                                            <span class="data-label">Alasan Penolakan</span>
-                                            <span class="data-value text-danger">{{ $row->alasan_penolakan }}</span>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="col-12">
+                                <div class="modern-card text-center p-4 mb-0">
+                                    <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+                                    <p class="text-muted mb-0">Belum ada riwayat pendaftaran.</p>
+                                </div>
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+
+                {{-- Dokumentasi & Distribusi --}}
+                <div class="mb-4">
+                    <h3 class="section-title mb-1" style="font-size: 1.25rem; color: var(--foreground);">Dokumentasi & Distribusi</h3>
+                    <p class="text-muted mb-3">Hasil penyembelihan hewan Anda dan penyalurannya.</p>
+                    
+                    @forelse ($penyembelihan as $row)
+                        <div class="modern-card mb-3 p-0 overflow-hidden">
+                            <div class="row g-0">
+                                <div class="col-md-4 bg-light d-flex align-items-center justify-content-center p-3" style="border-right: 1px solid var(--border);">
+                                    @if ($row->dokumentasi_penyembelihan)
+                                        <img src="{{ asset('storage/' . $row->dokumentasi_penyembelihan) }}" class="img-fluid rounded shadow-sm" alt="Penyembelihan">
+                                    @else
+                                        <div class="text-center text-muted">
+                                            <i class="fas fa-image fa-3x mb-2"></i>
+                                            <p class="mb-0 small">Belum ada foto</p>
                                         </div>
                                     @endif
                                 </div>
-                            @empty
-                                <div class="data-card text-center text-muted">Tidak ada riwayat transaksi.</div>
-                            @endforelse
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Dokumentasi Penyembelihan --}}
-                <div class="card">
-
-                    {{-- Mobile Card View --}}
-                    <div class="mobile-card-view">
-                        <div class="card-header mb-3">
-                            <h3 class="card-title">Dokumentasi Penyembelihan</h3>
-                            <p class="muted">Dokumentasi penyembelihan hewan kurban.</p>
-                        </div>
-                        <div class="data-grid">
-                            @forelse ($penyembelihan as $row)
-                                <div class="data-card">
-                                    <div class="data-row">
-                                        <span class="data-label">Nama Donatur</span>
-                                        <span class="data-value">{{ $row->order->user->name ?? '-' }}</span>
+                                <div class="col-md-8 p-3 p-md-4">
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <h5 class="mb-0" style="font-weight: 600; color: var(--foreground);">{{ $row->order->jenis_hewan ?? '-' }} Anda</h5>
+                                        <span class="status-badge status-{{ strtolower($row->status ?? 'pending') }}">{{ $row->status ?? '-' }}</span>
                                     </div>
-                                    <div class="data-row">
-                                        <span class="data-label">Jenis Hewan</span>
-                                        <span class="data-value">{{ $row->order->jenis_hewan ?? '-' }}</span>
-                                    </div>
-                                    <div class="data-row">
-                                        <span class="data-label">Status Hewan</span>
-                                        <span class="data-value">
-                                            <span
-                                                class="status-badge status-{{ strtolower($row->status ?? 'pending') }}">
-                                                {{ $row->status ?? '-' }}
-                                            </span>
-                                        </span>
-                                    </div>
-                                    <div class="data-row">
-                                        <span class="data-label">Waktu Penyembelihan</span>
-                                        <span
-                                            class="data-value">{{ \Carbon\Carbon::parse($row->pelaksanaan->Penyembelihan)->format('d M Y') ?? '-' }}</span>
-                                    </div>
-                                    <div class="data-row">
-                                        <span class="data-label">Berat Hewan</span>
-                                        <span
-                                            class="data-value">{{ $row->order->berat_hewan ? number_format($row->order->berat_hewan, 1) . ' kg' : '-' }}</span>
-                                    </div>
-                                    <div class="data-row">
-                                        <span class="data-label">Perkiraan Daging</span>
-                                        <span
-                                            class="data-value">{{ $row->order->perkiraan_daging ? number_format($row->order->perkiraan_daging, 1) . ' kg' : '-' }}</span>
-                                    </div>
-                                    <div class="data-row">
-                                        <span class="data-label">Dokumentasi</span>
-                                        <span class="data-value">
-                                            @if ($row->dokumentasi_penyembelihan)
-                                                <img src="{{ asset('storage/' . $row->dokumentasi_penyembelihan) }}"
-                                                    alt="Foto penyembelihan" style="max-width: 80px;">
-                                            @else
-                                                <span class="text-muted">Belum ada foto</span>
-                                            @endif
-                                        </span>
+                                    <div class="row g-3 mb-0">
+                                        <div class="col-6">
+                                            <small class="text-muted d-block">Tanggal Potong</small>
+                                            <strong style="color: var(--foreground);">{{ \Carbon\Carbon::parse($row->pelaksanaan->Penyembelihan)->format('d M Y') }}</strong>
+                                        </div>
+                                        <div class="col-6">
+                                            <small class="text-muted d-block">Berat & Daging</small>
+                                            <strong style="color: var(--foreground);">{{ $row->order->berat_hewan ? number_format($row->order->berat_hewan, 1) . ' kg' : '-' }}</strong> <span class="text-muted mx-1">/</span> <span style="color: var(--primary);">{{ $row->order->perkiraan_daging ? number_format($row->order->perkiraan_daging, 1) . ' kg' : '-' }}</span>
+                                        </div>
                                     </div>
                                 </div>
-                            @empty
-                                <div class="data-card text-center text-muted">Tidak ada data penyembelihan untuk
-                                    hewan Anda.</div>
-                            @endforelse
+                            </div>
                         </div>
-                    </div>
-                </div>
+                    @empty
+                        <div class="modern-card text-center p-4 mb-3">
+                            <i class="fas fa-camera-retro fa-3x text-muted mb-3"></i>
+                            <p class="text-muted mb-0">Belum ada dokumentasi penyembelihan untuk hewan Anda.</p>
+                        </div>
+                    @endforelse
 
-                {{-- Riwayat Distribusi Daging --}}
-                <div class="card">
-
-                    {{-- Mobile Card View --}}
-                    <div class="mobile-card-view">
-                        <div class="card-header mb-3">
-                            <h3 class="card-title">Riwayat Distribusi Daging</h3>
-                            <p class="muted">Catatan distribusi daging kurban yang telah dilakukan.</p>
+                    {{-- Galeri Distribusi --}}
+                    @if(count($distribusi) > 0)
+                        <h6 class="mb-3 mt-4" style="font-weight: 600; color: var(--foreground);">Galeri Distribusi Kepada Mustahik</h6>
+                        <div class="gallery-grid">
+                            @foreach ($distribusi as $item)
+                                @if ($item->dokumentasi && count($item->dokumentasi) > 0)
+                                    <div class="gallery-item position-relative" data-bs-toggle="modal" data-bs-target="#imageModal{{ $item->id }}">
+                                        <img src="{{ asset('storage/' . $item->dokumentasi[0]->file_path) }}" alt="Distribusi">
+                                        <div class="position-absolute bottom-0 start-0 w-100 p-2" style="background: linear-gradient(transparent, rgba(0,0,0,0.8));">
+                                            <span class="text-white small"><i class="fas fa-images"></i> +{{ count($item->dokumentasi) }}</span>
+                                        </div>
+                                    </div>
+                                @endif
+                            @endforeach
                         </div>
-                        <div class="data-grid">
-                            @forelse ($distribusi as $item)
-                                <div class="data-card">
-                                    <div class="data-row">
-                                        <span class="data-label">Tanggal Penyembelihan</span>
-                                        <span
-                                            class="data-value">{{ \Carbon\Carbon::parse($item->pelaksanaan->Penyembelihan)->format('d M Y') }}</span>
-                                    </div>
-                                    <div class="data-row">
-                                        <span class="data-label">Link Google Drive</span>
-                                        <span class="data-value">
-                                            @if ($item->link_gdrive)
-                                                <a href="{{ $item->link_gdrive }}" target="_blank">
-                                                    Buka Drive
-                                                </a>
-                                            @else
-                                                N/A
-                                            @endif
-                                        </span>
-                                    </div>
-                                    <div class="data-row">
-                                        <span class="data-label">Dokumentasi</span>
-                                        <span class="data-value">
-                                            @if ($item->dokumentasi && count($item->dokumentasi) > 0)
-                                                <button type="button" class="btn btn-sm btn-dark view-images-btn"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#imageModal{{ $item->id }}"
-                                                    style="width: 100%;">
-                                                    <i class="fas fa-eye"></i> Lihat Dokumentasi
-                                                    <span
-                                                        class="badge bg-light text-dark ml-1">{{ count($item->dokumentasi) }}</span>
-                                                </button>
-                                            @else
-                                                -
-                                            @endif
-                                        </span>
-                                    </div>
-                                    <div class="data-row">
-                                        <span class="data-label">Tanggal Upload</span>
-                                        <span class="data-value">
-                                            {{ \Carbon\Carbon::parse($item->created_at)->format('d M Y') }}
-                                        </span>
-                                    </div>
-                                </div>
-                            @empty
-                                <div class="data-card text-center text-muted">Belum ada riwayat distribusi daging.
-                                </div>
-                            @endforelse
+                        <div class="mt-3">
+                            @foreach ($distribusi as $item)
+                                @if ($item->link_gdrive)
+                                    <a href="{{ $item->link_gdrive }}" target="_blank" class="btn btn-outline-primary btn-sm me-2 mb-2" style="border-color: var(--primary); color: var(--primary);">
+                                        <i class="fab fa-google-drive me-1"></i> Drive ({{ \Carbon\Carbon::parse($item->pelaksanaan->Penyembelihan)->format('d M') }})
+                                    </a>
+                                @endif
+                            @endforeach
                         </div>
-                    </div>
+                    @endif
                 </div>
             </div>
             <!-- END RIGHT COLUMN -->
