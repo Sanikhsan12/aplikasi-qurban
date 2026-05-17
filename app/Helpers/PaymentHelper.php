@@ -27,7 +27,7 @@ class PaymentHelper
      */
     public static function canBePaid(Order $order)
     {
-        return in_array($order->status, ['pending', 'menunggu_verifikasi']);
+        return $order->status === 'menunggu verifikasi';
     }
 
     /**
@@ -37,7 +37,7 @@ class PaymentHelper
     {
         $labels = [
             'pending' => 'Menunggu Pembayaran',
-            'menunggu_verifikasi' => 'Menunggu Verifikasi',
+            'menunggu verifikasi' => 'Menunggu Verifikasi',
             'disetujui' => 'Pembayaran Diterima',
             'ditolak' => 'Pembayaran Ditolak',
         ];
@@ -52,7 +52,7 @@ class PaymentHelper
     {
         $colors = [
             'pending' => 'warning',
-            'menunggu_verifikasi' => 'info',
+            'menunggu verifikasi' => 'info',
             'disetujui' => 'success',
             'ditolak' => 'danger',
         ];
@@ -67,7 +67,7 @@ class PaymentHelper
     {
         $icons = [
             'pending' => 'fa-clock',
-            'menunggu_verifikasi' => 'fa-hourglass-half',
+            'menunggu verifikasi' => 'fa-hourglass-half',
             'disetujui' => 'fa-check-circle',
             'ditolak' => 'fa-times-circle',
         ];

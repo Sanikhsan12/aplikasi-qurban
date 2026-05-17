@@ -77,7 +77,7 @@ class Order extends Model
     {
         $statuses = [
             'pending' => 'Menunggu',
-            'menunggu_verifikasi' => 'Menunggu Verifikasi',
+            'menunggu verifikasi' => 'Menunggu Verifikasi',
             'disetujui' => 'Disetujui',
             'ditolak' => 'Ditolak'
         ];
@@ -141,7 +141,7 @@ class Order extends Model
      */
     public function canBePaid(): bool
     {
-        return in_array($this->status, ['pending', 'menunggu_verifikasi']);
+        return $this->status === 'menunggu verifikasi';
     }
 
     /**
@@ -173,7 +173,7 @@ class Order extends Model
     {
         $labels = [
             'pending' => 'Menunggu Pembayaran',
-            'menunggu_verifikasi' => 'Menunggu Verifikasi',
+            'menunggu verifikasi' => 'Menunggu Verifikasi',
             'disetujui' => 'Pembayaran Diterima',
             'ditolak' => 'Pembayaran Ditolak',
         ];

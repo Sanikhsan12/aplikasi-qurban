@@ -43,11 +43,9 @@ class OrderController extends Controller
         $validated = $request->validate([
             'tipe_pendaftaran' => 'required|in:transfer,kirim langsung',
             'ketersediaan_hewan_id' => 'required_if:tipe_pendaftaran,transfer|exists:ketersediaan_hewan,id',
-            'bank_id' => 'required_if:tipe_pendaftaran,transfer|exists:bank_penerima,id',
             'jenis_hewan' => 'required_if:tipe_pendaftaran,kirim langsung|string|max:100',
             'berat_kirim' => 'required_if:tipe_pendaftaran,kirim langsung|numeric|min:1',
             'total_hewan' => 'required|integer|min:1|max:1',
-            'bukti_pembayaran' => 'required_if:tipe_pendaftaran,transfer|file|mimes:jpg,jpeg,png,pdf|max:2048',
         ]);
 
         DB::beginTransaction();
@@ -88,14 +86,8 @@ class OrderController extends Controller
                     'berat_hewan' => $hewan->bobot,
                     'perkiraan_daging' => $hewan->bobot * 0.4,
                     'total_harga' => $hewan->harga,
-                    'bank_id' => $validated['bank_id'],
+                    'bank_id' => null, // Midtrans will handle payment channels
                 ];
-
-                if ($request->hasFile('bukti_pembayaran')) {
-                    $data['bukti_pembayaran'] = $request
-                        ->file('bukti_pembayaran')
-                        ->store('bukti_pembayaran', 'public');
-                }
 
                 $hewan->decrement('jumlah');
             }
@@ -118,8 +110,13 @@ class OrderController extends Controller
 
             DB::commit();
 
+            if ($validated['tipe_pendaftaran'] === 'transfer') {
+                return redirect()->route('peserta.payment.show', $order->id)
+                    ->with('success', 'Pesanan berhasil dibuat! Silakan lanjutkan ke pembayaran.');
+            }
+
             return redirect()->route('peserta.dashboard')
-                ->with('success', 'Pendaftaran berhasil!');
+                ->with('success', 'Pendaftaran kirim langsung berhasil!');
         } catch (\Throwable $e) {
             DB::rollBack();
 

@@ -171,23 +171,6 @@
                             @enderror
                         </div>
 
-                        {{-- TRANSFER: PILIH BANK --}}
-                        <div class="form-group" id="bank-select-group" style="display:none">
-                            <label>Pilih Bank *</label>
-                            <select id="bank_id" name="bank_id" class="input">
-                                <option value="">Pilih Bank Tujuan Transfer</option>
-                                @foreach ($bankPenerima as $bank)
-                                    <option value="{{ $bank->id }}" data-nama-bank="{{ $bank->nama_bank }}"
-                                        data-no-rek="{{ $bank->no_rek }}" data-as-nama="{{ $bank->as_nama }}"
-                                        {{ old('bank_id') == $bank->id ? 'selected' : '' }}>
-                                        {{ $bank->nama_bank }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('bank_id')
-                                <small class="error">{{ $message }}</small>
-                            @enderror
-                        </div>
 
                         {{-- KIRIM LANGSUNG --}}
                         <div class="form-group" id="kirim-group" style="display:none">
@@ -234,15 +217,6 @@
                             <input type="text" id="total_harga_display" class="input" readonly>
                         </div>
 
-                        {{-- BUKTI PEMBAYARAN --}}
-                        <div class="form-group" id="bukti-group" style="display:none">
-                            <label>Bukti Pembayaran *</label>
-                            <input type="file" name="bukti_pembayaran" class="input"
-                                accept=".jpg,.jpeg,.png,.webp,.pdf">
-                            @error('bukti_pembayaran')
-                                <small class="error">{{ $message }}</small>
-                            @enderror
-                        </div>
 
                         {{-- SUBMIT --}}
                         <div class="actions">
@@ -268,12 +242,6 @@
                     </div>
                 @endif
 
-                {{-- INFORMASI BANK TERPILIH --}}
-                <div class="form-group" id="bank-info-group" style="display:none">
-                    <div class="bank-info-container" id="bank-detail-container">
-                        <!-- Informasi bank akan dimuat dinamis di sini -->
-                    </div>
-                </div>
 
                 {{-- Catatan --}}
                 <div class="card form-card">
@@ -371,14 +339,16 @@
                                             <strong style="color: var(--foreground);">{{ $row->tipe_pendaftaran ?? '-' }}</strong>
                                         </div>
                                         <div class="col-span-2 mt-2" style="grid-column: span 2;">
-                                            @if ($row->bukti_pembayaran)
+                                            @if ($row->tipe_pendaftaran === 'transfer' && $row->status === 'menunggu verifikasi')
+                                                <a href="{{ route('peserta.payment.show', $row->id) }}" class="btn btn-primary w-100 mb-2" style="background-color: var(--primary); border-color: var(--primary);">
+                                                    <i class="fas fa-credit-card me-2"></i> Lanjutkan Pembayaran
+                                                </a>
+                                            @endif
+                                            
+                                            @if ($row->bukti_pembayaran && !json_decode($row->bukti_pembayaran))
                                                 <div class="d-flex align-items-center gap-3">
                                                     <img src="{{ asset('storage/' . $row->bukti_pembayaran) }}" alt="Bukti Pembayaran" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border);">
-                                                    <span class="text-success" style="color: var(--primary) !important;"><i class="fas fa-check-circle me-1"></i> Bukti Terunggah</span>
-                                                </div>
-                                            @else
-                                                <div class="alert alert-warning py-2 mb-0" style="font-size: 0.9rem;">
-                                                    <i class="fas fa-exclamation-triangle me-1"></i> Harap segera unggah bukti pembayaran.
+                                                    <span class="text-success" style="color: var(--primary) !important;"><i class="fas fa-check-circle me-1"></i> Bukti Terunggah (Manual)</span>
                                                 </div>
                                             @endif
                                             @if ($row->alasan_penolakan)

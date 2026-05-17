@@ -18,7 +18,7 @@ class PaymentController extends Controller
         }
 
         // Check if order is pending
-        if ($order->status !== 'pending' && $order->status !== 'menunggu_verifikasi') {
+        if ($order->status !== 'menunggu verifikasi') {
             return redirect()->back()->with('error', 'Order ini tidak dapat dibayar.');
         }
 
@@ -153,7 +153,7 @@ class PaymentController extends Controller
             if ($transaction->fraud_status === 'challenge') {
                 // Still waiting for fraud verification
                 $order->update([
-                    'status' => 'menunggu_verifikasi',
+                    'status' => 'menunggu verifikasi',
                     'bukti_pembayaran' => json_encode($transaction),
                 ]);
             } else if ($transaction->fraud_status === 'accept') {
@@ -175,7 +175,7 @@ class PaymentController extends Controller
         } else if ($transactionStatus === 'pending') {
             // Payment pending
             $order->update([
-                'status' => 'menunggu_verifikasi',
+                'status' => 'menunggu verifikasi',
                 'bukti_pembayaran' => json_encode($transaction),
             ]);
         } else if ($transactionStatus === 'deny') {
@@ -188,7 +188,7 @@ class PaymentController extends Controller
         } else if ($transactionStatus === 'cancel' || $transactionStatus === 'expire') {
             // Payment canceled or expired
             $order->update([
-                'status' => 'pending',
+                'status' => 'menunggu verifikasi',
                 'bukti_pembayaran' => null,
             ]);
         }
