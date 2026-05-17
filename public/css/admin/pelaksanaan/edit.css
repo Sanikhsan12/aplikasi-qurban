@@ -1,0 +1,431 @@
+/* Mobile First Approach */
+.mobile-form-container {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    margin: 0 auto;
+    max-width: 100%;
+}
+
+.mobile-form-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.5rem;
+    position: relative;
+}
+
+.mobile-form-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.mobile-form-header p {
+    opacity: 0.9;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.mobile-form-body {
+    padding: 1.5rem;
+}
+
+.mobile-form-group {
+    margin-bottom: 1.5rem;
+}
+
+.mobile-form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.mobile-form-col {
+    flex: 1 1 100%;
+}
+
+.mobile-form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.95rem;
+}
+
+.mobile-form-label.required::after {
+    content: " *";
+    color: #ef4444;
+}
+
+.mobile-form-input,
+.mobile-form-textarea,
+.mobile-form-select {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: #f9fafb;
+    font-family: "Nunito", sans-serif;
+}
+
+.mobile-form-input:focus,
+.mobile-form-textarea:focus,
+.mobile-form-select:focus {
+    outline: none;
+    border-color: #667eea;
+    background-color: white;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+.mobile-form-input:disabled,
+.mobile-form-textarea:disabled {
+    background-color: #f3f4f6;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+.mobile-form-help {
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin-top: 0.5rem;
+    line-height: 1.4;
+}
+
+.mobile-error-message {
+    color: #ef4444;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    font-weight: 500;
+}
+
+.mobile-form-footer {
+    padding: 1.5rem;
+    background-color: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.mobile-form-actions {
+    display: flex;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.mobile-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.875rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    gap: 0.5rem;
+    flex: 1;
+    min-height: 50px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.mobile-btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.mobile-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.mobile-btn-secondary {
+    background-color: white;
+    color: #374151;
+    border: 2px solid #d1d5db;
+}
+
+.mobile-btn-secondary:hover {
+    background-color: #f9fafb;
+    border-color: #9ca3af;
+}
+
+.mobile-btn-icon {
+    font-size: 1.1rem;
+}
+
+.mobile-alert {
+    padding: 1rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+    animation: slideIn 0.3s ease;
+}
+
+.mobile-alert-success {
+    background-color: #d1fae5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+
+.mobile-alert-error {
+    background-color: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+.mobile-alert-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.mobile-alert-icon {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+/* Date input custom styling */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    background: transparent;
+    bottom: 0;
+    color: transparent;
+    cursor: pointer;
+    height: auto;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: auto;
+}
+
+.mobile-date-wrapper {
+    position: relative;
+}
+
+.mobile-date-wrapper:after {
+    content: "📅";
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    font-size: 1.25rem;
+}
+
+/* Animation */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Desktop optimizations */
+@media (min-width: 768px) {
+    .mobile-form-header {
+        padding: 2rem;
+    }
+
+    .mobile-form-header h1 {
+        font-size: 1.75rem;
+    }
+
+    .mobile-form-body {
+        padding: 2rem;
+    }
+
+    .mobile-form-col {
+        flex: 1 1 calc(50% - 0.5rem);
+    }
+
+    .mobile-form-footer {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 2rem;
+    }
+
+    .mobile-form-actions {
+        flex: 0 0 auto;
+        width: auto;
+    }
+
+    .mobile-btn {
+        flex: 0 0 auto;
+        padding: 0.875rem 2rem;
+    }
+}
+
+/* Tablet optimizations */
+@media (min-width: 640px) and (max-width: 767px) {
+    .mobile-form-col {
+        flex: 1 1 100%;
+    }
+}
+
+/* Small mobile optimizations */
+@media (max-width: 639px) {
+    .mobile-form-header,
+    .mobile-form-body,
+    .mobile-form-footer {
+        padding: 1.25rem;
+    }
+
+    .mobile-form-header h1 {
+        font-size: 1.35rem;
+    }
+
+    .mobile-form-input,
+    .mobile-form-textarea,
+    .mobile-form-select {
+        padding: 0.75rem 0.875rem;
+        font-size: 0.95rem;
+    }
+
+    .mobile-btn {
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        min-height: 44px;
+    }
+
+    .mobile-form-actions {
+        flex-direction: column;
+    }
+
+    .mobile-btn-icon {
+        font-size: 1rem;
+    }
+}
+
+/* Very small screens */
+@media (max-width: 375px) {
+    .mobile-form-header {
+        padding: 1rem;
+    }
+
+    .mobile-form-body {
+        padding: 1rem;
+    }
+
+    .mobile-form-footer {
+        padding: 1rem;
+    }
+
+    .mobile-form-group {
+        margin-bottom: 1.25rem;
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .mobile-btn {
+        min-height: 44px;
+    }
+
+    .mobile-form-input,
+    .mobile-form-textarea,
+    .mobile-form-select {
+        font-size: 16px; /* Prevents iOS zoom */
+        padding: 12px 16px;
+    }
+
+    .mobile-form-label {
+        font-size: 16px;
+    }
+}
+
+/* Loading state */
+.mobile-btn.loading {
+    position: relative;
+    color: transparent;
+}
+
+.mobile-btn.loading::after {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Validation styling */
+.mobile-form-input.is-invalid {
+    border-color: #ef4444;
+    background-color: #fef2f2;
+}
+
+.mobile-form-input.is-valid {
+    border-color: #10b981;
+    background-color: #f0fdf4;
+}
+
+/* Back button styling */
+.mobile-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #6b7280;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.mobile-back-btn:hover {
+    background-color: #f3f4f6;
+    color: #374151;
+}
+
+/* Form status indicator */
+.mobile-form-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background-color: #f9fafb;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+}
+
+.mobile-form-status-icon {
+    color: #667eea;
+}

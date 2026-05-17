@@ -1,0 +1,179 @@
+/* Custom styling for the view button - Dark Theme */
+.view-images-btn {
+    transition: all 0.3s ease;
+    background-color: #343a40;
+    border-color: #343a40;
+}
+
+.view-images-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    background-color: #23272b;
+    border-color: #23272b;
+}
+
+/* Dark Modal Styling */
+.dark-modal .modal-content {
+    background-color: #343a40;
+    color: #fff;
+    border: 1px solid #495057;
+}
+
+.dark-modal .modal-header,
+.dark-modal .modal-footer {
+    border-color: #495057;
+}
+
+.dark-modal .close {
+    color: #fff;
+    text-shadow: 0 1px 0 #000;
+}
+
+.dark-modal .close:hover {
+    color: #dee2e6;
+}
+
+/* Dark Carousel Styling */
+.dark-carousel .carousel-indicators li {
+    background-color: #6c757d;
+    border: 1px solid #495057;
+}
+
+.dark-carousel .carousel-indicators .active {
+    background-color: #fff;
+    border-color: #fff;
+}
+
+.dark-carousel .carousel-control-prev,
+.dark-carousel .carousel-control-next {
+    width: 8%;
+    opacity: 0.8;
+}
+
+.dark-carousel .carousel-control-prev:hover,
+.dark-carousel .carousel-control-next:hover {
+    opacity: 1;
+}
+
+.dark-control .carousel-control-prev-icon,
+.dark-control .carousel-control-next-icon {
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    background-size: 50% 50%;
+    border: 2px solid #fff;
+}
+
+.dark-carousel .carousel-caption {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
+    padding: 8px 16px;
+    bottom: 20px;
+}
+
+/* Image container styling */
+.image-container {
+    background-color: #000;
+    border-radius: 8px;
+    padding: 20px;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #495057;
+}
+
+.modal-image-dark {
+    max-width: 100%;
+    max-height: 500px;
+    height: auto;
+    border-radius: 4px;
+}
+
+/* Mobile view button */
+.mobile-card-view .view-images-btn {
+    padding: 8px 16px;
+    font-size: 14px;
+}
+
+/* Badge styling */
+.badge-quantity {
+    background-color: #343a40;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    border: 1px solid #495057;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .modal-dialog {
+        margin: 10px;
+    }
+
+    .image-container {
+        min-height: 200px;
+        padding: 10px;
+    }
+
+    .modal-image-dark {
+        max-height: 300px;
+    }
+
+    .carousel-caption {
+        display: none !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .modal-dialog {
+        margin: 5px;
+    }
+
+    .modal-body {
+        padding: 10px;
+    }
+
+    .image-container {
+        min-height: 150px;
+        padding: 5px;
+    }
+
+    .modal-image-dark {
+        max-height: 200px;
+    }
+}
+
+/* Dark scrollbar for modal */
+.modal-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: #343a40;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: #495057;
+    border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: #6c757d;
+}
+
+/* Smooth transitions */
+.carousel-item {
+    transition: transform 0.6s ease-in-out;
+}
+
+/* Hover effects for images */
+.modal-image-dark {
+    transition: transform 0.3s ease;
+}
+
+.modal-image-dark:hover {
+    transform: scale(1.02);
+}

@@ -1,0 +1,4 @@
+lakukan ini
+php artisan make:request StoreOrderRequest
+php artisan make:observer OrderObserver --model=Order
+edit AppServiceProvider.php

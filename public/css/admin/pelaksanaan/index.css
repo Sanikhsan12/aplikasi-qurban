@@ -1,0 +1,323 @@
+:root {
+    --primary-color: #4e73df;
+    --secondary-color: #858796;
+    --success-color: #1cc88a;
+    --info-color: #36b9cc;
+    --warning-color: #f6c23e;
+    --danger-color: #e74a3b;
+    --light-color: #f8f9fc;
+    --dark-color: #5a5c69;
+}
+
+.dashboard-container {
+    /* max-width: 1280px; */
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+.btn-group .btn {
+    margin-right: 5px;
+}
+
+.btn-group .btn:last-child {
+    margin-right: 0;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    border-radius: 0.2rem;
+}
+
+.btn-outline-warning:hover {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.btn-outline-danger:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+form.d-inline {
+    display: inline-block;
+}
+
+/* Table styling */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.data-table th,
+.data-table td {
+    padding: 0.75rem;
+    vertical-align: middle;
+    border: 1px solid #e3e6f0;
+}
+
+.data-table th {
+    background-color: #f8f9fc;
+    font-weight: 700;
+    color: #5a5c69;
+    text-align: left;
+}
+
+.data-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.empty-state {
+    padding: 2rem;
+    text-align: center;
+    color: #858796;
+}
+
+.btn-custom {
+    background: linear-gradient(135deg, var(--primary-color), #2a4cb3);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-custom:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(78, 115, 223, 0.2);
+    color: white;
+}
+
+
+.photo-thumbnail {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid #e3e6f0;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.photo-thumbnail:hover {
+    border-color: var(--primary-color);
+    transform: scale(1.05);
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: 2rem 1.5rem;
+    }
+
+    
+    .btn-group-responsive {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .btn-group-responsive .btn {
+        width: 100%;
+    }
+
+    .container-heading {
+        padding: 1.5rem;
+    }
+
+    .page-heading {
+        padding-left: 1em;
+        padding-right: 1rem;
+    }
+
+    .h3 {
+        font-size: 1.5rem;
+    }
+
+    .h6 {
+        font-size: 0.9rem;
+    }
+
+    .card-header {
+        padding: 0.75rem 1rem;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    /* Button adjustments */
+    .btn-sm {
+        padding: 0.2rem 0.4rem;
+        font-size: 0.75rem;
+    }
+
+    .d-flex.gap-2 {
+        gap: 5px !important;
+    }
+
+    /* Table adjustments for mobile */
+    .data-table {
+        font-size: 0.8rem;
+    }
+
+    .data-table th,
+    .data-table td {
+        padding: 0.5rem 0.3rem;
+    }
+
+    /* Hide less important columns on mobile */
+    .mobile-hide {
+        display: none;
+    }
+
+    /* Adjust action buttons container */
+    .action-buttons {
+        display: flex;
+        flex-wrap: nowrap;
+    }
+
+    .action-buttons .btn {
+        min-width: 36px;
+        padding: 0.25rem;
+    }
+
+    .action-buttons .btn i {
+        margin: 0;
+    }
+
+    /* Make "Tambah Data" button full width on mobile */
+    .d-sm-inline-block {
+        display: block !important;
+        width: 100%;
+        margin-top: 1rem;
+        text-align: center;
+    }
+
+    /* Adjust page heading layout */
+    .d-sm-flex {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+
+    .d-sm-flex .h3 {
+        margin-bottom: 1rem;
+    }
+
+    /* Card adjustments */
+    .card {
+        margin-bottom: 1rem !important;
+        border-radius: 0.5rem;
+    }
+
+    /* Empty state adjustments */
+    .empty-state {
+        padding: 1.5rem;
+    }
+
+    .empty-state i {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Further mobile optimization */
+    .data-table {
+        font-size: 0.75rem;
+    }
+
+    .data-table th,
+    .data-table td {
+        padding: 0.4rem 0.2rem;
+    }
+
+    /* Stack action buttons vertically on very small screens */
+    .action-buttons {
+        flex-direction: column;
+        gap: 0.25rem !important;
+    }
+
+    .action-buttons .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Mobile card view for table data */
+    .mobile-card-view {
+        display: block;
+    }
+
+    .mobile-card-view .card {
+        margin-bottom: 0.75rem;
+        border: 1px solid #e3e6f0;
+    }
+
+    .mobile-card-view .card-body {
+        padding: 1rem;
+    }
+
+    .mobile-card-view .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 0.5rem;
+    }
+
+    .mobile-card-view .col-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+        padding: 0 0.5rem;
+    }
+
+    .mobile-card-view .col-12 {
+        flex: 0 0 100%;
+        max-width: 100%;
+        padding: 0 0.5rem;
+    }
+
+    .mobile-card-view .text-muted {
+        font-size: 0.75rem;
+        color: #858796 !important;
+    }
+
+    .mobile-card-view .action-buttons {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e3e6f0;
+        flex-direction: row;
+        justify-content: center;
+    }
+}
+
+/* Responsive date formatting */
+.date-cell {
+    white-space: nowrap;
+}
+
+@media (max-width: 992px) {
+    .date-cell {
+        white-space: normal;
+        font-size: 0.85rem;
+    }
+}
+
+/* Print styles */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    .data-table {
+        border: 1px solid #000 !important;
+    }
+
+    .data-table th {
+        background-color: #f0f0f0 !important;
+    }
+}

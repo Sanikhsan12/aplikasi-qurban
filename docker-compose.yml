@@ -1,0 +1,65 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: kurban_app
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/var/www
+    environment:
+      - DB_CONNECTION=mysql
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=kurban_db
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      bash -c "
+      echo '🚀 Setup Composer...' &&
+      composer install --no-interaction &&
+      if [ ! -f .env ]; then echo '📝 Copying .env...' && cp .env.example .env; fi &&
+      echo '🔑 Generating Key...' &&
+      php artisan key:generate &&
+      echo '📦 Running Migrations & Seeder...' &&
+      php artisan migrate:fresh --seed --force &&
+      echo '🎨 Building Frontend Assets...' &&
+      npm install &&
+      npm run build &&
+      echo '🟢 Starting Server...' &&
+      php artisan serve --host=0.0.0.0 --port=8000
+      "
+    networks:
+      - kurban_net
+
+  db:
+    image: mysql:8.0
+    container_name: kurban_db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: kurban_db
+      MYSQL_ROOT_PASSWORD: root
+    healthcheck:
+      test:
+        ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - kurban_net
+
+networks:
+  kurban_net:
+    driver: bridge
+
+volumes:
+  db_data:
