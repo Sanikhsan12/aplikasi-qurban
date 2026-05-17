@@ -44,6 +44,11 @@
 
 
 
+                    <!-- Theme Toggle -->
+                    <button class="theme-toggle" id="themeToggle" title="Toggle Dark/Light Mode">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                    </button>
+
                     <!-- User Dropdown -->
                     <div class="user-dropdown">
                         <button class="user-trigger" id="userTrigger">
@@ -94,13 +99,17 @@
         </div>
     </nav>
 
-    <main class="dashboard-container">
-        <h1 class="section-title">Dashboard Pengguna</h1>
-        <p class="muted" style="margin-bottom: 1.5rem;">Halaman ini menampilkan data kurban yang terhubung ke database.
-        </p>
+    <main class="container-fluid py-4" style="max-width: 1400px; margin: 0 auto;">
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <h1 class="section-title mb-1">Dashboard Pengguna</h1>
+                <p class="muted mb-0">Halaman ini menampilkan data kurban yang terhubung ke database.</p>
+            </div>
+        </div>
 
-        <div class="dashboard-grid">
-            <aside>
+        <div class="row g-4">
+            <!-- LEFT COLUMN: Form Pendaftaran (Col-LG-4) -->
+            <div class="col-lg-4">
                 {{-- Form Tambah Peserta --}}
                 @if ($isOpen)
                     <form method="POST" action="{{ route('peserta.order.store') }}" enctype="multipart/form-data"
@@ -292,9 +301,11 @@
                         </a>
                     </p>
                 </div>
-            </aside>
+            </div>
+            <!-- END LEFT COLUMN -->
 
-            <section>
+            <!-- RIGHT COLUMN: Tables and Info (Col-LG-8) -->
+            <div class="col-lg-8">
                 {{-- Jadwal Pelaksanaan Kurban --}}
                 <div class="card">
                     {{-- DESKTOP VIEW --}}
@@ -790,7 +801,8 @@
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
+            <!-- END RIGHT COLUMN -->
         </div>
     </main>
 

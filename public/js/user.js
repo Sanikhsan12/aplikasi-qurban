@@ -1,6 +1,47 @@
 // form-pendaftaran.js
 document.addEventListener('DOMContentLoaded', function () {
     // =============================================
+    // 0. THEME TOGGLE (DARK/LIGHT MODE)
+    // =============================================
+    const themeToggleBtn = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    
+    // Check saved theme or system preference
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        if (themeIcon) {
+            themeIcon.classList.remove('fa-moon');
+            themeIcon.classList.add('fa-sun');
+        }
+    }
+    
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', function() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            let newTheme = 'light';
+            
+            if (currentTheme !== 'dark') {
+                newTheme = 'dark';
+            }
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Update icon
+            if (newTheme === 'dark') {
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            } else {
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            }
+        });
+    }
+
+    // =============================================
     // 1. ELEMENTS SELECTION
     // =============================================
     const tipePendaftaran = document.getElementById('tipe_pendaftaran');

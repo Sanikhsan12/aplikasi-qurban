@@ -30,8 +30,8 @@ services:
       php artisan key:generate &&
       echo '🧹 Clearing Caches...' &&
       php artisan config:clear &&
-      echo '📦 Running Migrations & Seeder...' &&
-      php artisan migrate:fresh --seed --force &&
+      echo '📦 Running Migrations...' &&
+      php artisan migrate --force &&
       echo '🎨 Building Frontend Assets...' &&
       npm install &&
       npm run build &&

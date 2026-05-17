@@ -20,6 +20,23 @@
     --background-alt: hsl(45, 30%, 97%);
     --foreground-alt: hsl(150, 30%, 15%);
     --border-alt: hsl(150, 20%, 85%);
+    --bg-overlay: rgba(255, 255, 255, 0.8);
+    --hover-bg: rgba(158, 64%, 32%, 0.05);
+}
+
+[data-theme="dark"] {
+    --background: #111827;
+    --card: #1f2937;
+    --background-alt: #030712;
+    --foreground: #f9fafb;
+    --foreground-alt: #f3f4f6;
+    --muted-foreground: #9ca3af;
+    --border: #374151;
+    --border-alt: #4b5563;
+    --bg-overlay: rgba(31, 41, 55, 0.8);
+    --hover-bg: rgba(255, 255, 255, 0.05);
+    --primary: hsl(158, 60%, 45%);
+    --primary-dark: hsl(158, 60%, 35%);
 }
 
 * {
@@ -34,6 +51,27 @@ body {
     color: var(--foreground-alt);
     min-height: 100vh;
     padding: 0;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+    background: none;
+    border: none;
+    color: var(--foreground-alt);
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    margin-right: 1rem;
+}
+.theme-toggle:hover {
+    background: var(--hover-bg);
+    color: var(--primary);
 }
 
 /* Navbar Styles */
