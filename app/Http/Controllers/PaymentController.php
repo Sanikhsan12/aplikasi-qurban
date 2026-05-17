@@ -82,6 +82,11 @@ class PaymentController extends Controller
             // Get Snap token
             $snapToken = \Midtrans\Snap::getSnapToken($transaction);
 
+            // Save order_id to allow manual verification later
+            $order->update([
+                'bukti_pembayaran' => json_encode(['order_id' => $transactionDetails['order_id']])
+            ]);
+
             return response()->json([
                 'snap_token' => $snapToken,
                 'order_id' => $transactionDetails['order_id'],
@@ -128,8 +133,27 @@ class PaymentController extends Controller
      */
     public function finish(Request $request)
     {
+        // Try to verify immediately (useful for Sandbox/Local where webhook can't reach)
+        if ($request->has('order_id')) {
+            $order = Order::find($request->order_id);
+            if ($order && $order->bukti_pembayaran) {
+                try {
+                    \Midtrans\Config::$serverKey = config('midtrans.server_key');
+                    \Midtrans\Config::$isProduction = config('midtrans.is_production');
+                    
+                    $details = json_decode($order->bukti_pembayaran, true);
+                    if (isset($details['order_id'])) {
+                        $transaction = \Midtrans\Transaction::status($details['order_id']);
+                        $this->handlePaymentStatus($order, $transaction);
+                    }
+                } catch (\Exception $e) {
+                    \Log::error('Manual verify error: ' . $e->getMessage());
+                }
+            }
+        }
+
         return redirect()->route('peserta.dashboard')
-            ->with('success', 'Terima kasih! Pembayaran Anda sedang diproses.');
+            ->with('success', 'Transaksi Anda telah diproses. Cek status terbaru di bawah.');
     }
 
     /**
