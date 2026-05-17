@@ -80,13 +80,11 @@
                                 @endif
 
                                 <div class="dropdown-divider"></div>
-                                <form method="POST" action="{{ route('logout') }}" style="display: none;"
-                                    id="logoutForm">
+                                <form method="POST" action="{{ route('logout') }}" style="display: none;" id="logoutForm">
                                     @csrf
                                 </form>
-                                <a href="#" class="dropdown-link"
-                                    onclick="event.preventDefault(); document.getElementById('logoutForm').submit();">
-                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                <a href="#" class="dropdown-link" style="color: red; font-weight: bold; display: flex; align-items: center; padding: 12px 16px; background-color: #fee2e2; border-radius: 6px; margin: 0.5rem;" onclick="event.preventDefault(); document.getElementById('logoutForm').submit();">
+                                    <i class="fas fa-sign-out-alt" style="color: red;"></i> Logout
                                 </a>
                             </div>
                         </div>
@@ -248,12 +246,16 @@
                     <div class="card form-card" style="padding:1.5rem; margin-bottom:1.25rem;">
                         <h1 class="form-title" style="color:red;">Pendaftaran Belum Dibuka / Sudah Ditutup!</h1>
                         <br>
-                        <p class="muted">
-                            Pendaftaran dibuka dari
-                            <strong>{{ \Carbon\Carbon::parse($pelaksanaan->Tanggal_Pendaftaran)->format('d M Y') }}</strong>
-                            hingga
-                            <strong>{{ \Carbon\Carbon::parse($pelaksanaan->Tanggal_Penutupan)->format('d M Y') }}</strong>
-                        </p>
+                        @if ($pelaksanaan)
+                            <p class="muted">
+                                Pendaftaran dibuka dari
+                                <strong>{{ \Carbon\Carbon::parse($pelaksanaan->Tanggal_Pendaftaran)->format('d M Y') }}</strong>
+                                hingga
+                                <strong>{{ \Carbon\Carbon::parse($pelaksanaan->Tanggal_Penutupan)->format('d M Y') }}</strong>
+                            </p>
+                        @else
+                            <p class="muted">Jadwal pelaksanaan kurban belum ditetapkan oleh panitia.</p>
+                        @endif
                     </div>
                 @endif
 

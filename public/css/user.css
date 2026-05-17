@@ -285,17 +285,13 @@ body {
     border: 1px solid var(--border-alt);
     border-radius: var(--radius-lg);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px);
-    transition: all 0.3s ease;
+    display: none;
     z-index: 1000;
 }
 
-.dropdown-menu.open {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
+.dropdown-menu.open,
+.user-dropdown:hover .dropdown-menu {
+    display: block;
 }
 
 .dropdown-header {
@@ -796,9 +792,6 @@ select.input {
         box-shadow: none;
         border: 1px solid var(--border-alt);
         margin-top: 0.5rem;
-        opacity: 1;
-        visibility: visible;
-        transform: none;
         display: none;
     }
 

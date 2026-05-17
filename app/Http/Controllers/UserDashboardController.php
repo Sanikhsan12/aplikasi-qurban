@@ -60,10 +60,13 @@ class UserDashboardController extends Controller
 
         $today = Carbon::today();
 
-        $isOpen = $today->between(
-            Carbon::parse($pelaksanaan->Tanggal_Pendaftaran),
-            Carbon::parse($pelaksanaan->Tanggal_Penutupan)
-        );
+        $isOpen = false;
+        if ($pelaksanaan) {
+            $isOpen = $today->between(
+                Carbon::parse($pelaksanaan->Tanggal_Pendaftaran),
+                Carbon::parse($pelaksanaan->Tanggal_Penutupan)
+            );
+        }
 // ---------------- Data untuk menampilkan pelaksanaan kurban selesai ---------------------------
 
 
