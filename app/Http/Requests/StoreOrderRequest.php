@@ -11,7 +11,7 @@ class StoreOrderRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,34 +23,16 @@ class StoreOrderRequest extends FormRequest
     {
         return [
             'tipe_pendaftaran' => 'required|in:transfer,kirim langsung',
-
-            'ketersediaan_hewan_id' =>
-            'required_if:tipe_pendaftaran,transfer|nullable|exists:ketersediaan_hewan,id',
-
-            'jenis_hewan' =>
-            'required_if:tipe_pendaftaran,kirim langsung|string|max:100',
-
-            'total_hewan' => 'required|integer|min:1',
-
-            'berat_hewan' =>
-            'required|numeric|min:1',
-
-            'bukti_pembayaran' =>
-            'required_if:tipe_pendaftaran,transfer|nullable|mimes:jpg,jpeg,png,webp,pdf|max:2048',
-        ];
-    }
-
-    public function messages(): array
-    {
-        return [
-            'ketersediaan_hewan_id.required_if' =>
-            'Pilih hewan untuk metode transfer',
-
-            'jenis_hewan.required_if' =>
-            'Jenis hewan wajib diisi untuk kirim langsung',
-
-            'bukti_pembayaran.required_if' =>
-            'Bukti pembayaran wajib diupload',
+            'ketersediaan_hewan_id' => 'required_if:tipe_pendaftaran,transfer|exists:ketersediaan_hewan,id',
+            'jenis_hewan' => 'required_if:tipe_pendaftaran,kirim langsung|string|max:100',
+            'berat_kirim' => 'required_if:tipe_pendaftaran,kirim langsung|numeric|min:1',
+            'total_hewan' => 'required|integer|min:1|max:1',
+            'peserta_2' => 'nullable|string|max:255',
+            'peserta_3' => 'nullable|string|max:255',
+            'peserta_4' => 'nullable|string|max:255',
+            'peserta_5' => 'nullable|string|max:255',
+            'peserta_6' => 'nullable|string|max:255',
+            'peserta_7' => 'nullable|string|max:255',
         ];
     }
 }

@@ -31,7 +31,12 @@ Proyek ini mengikuti standar struktur direktori Laravel dengan beberapa penyesua
 
 ```text
 kurban_transaksielektronik/
-├── app/               # Logika inti aplikasi (Controllers, Models, Middleware dll)
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/  # Menangani routing dan interaksi HTTP
+│   │   └── Requests/     # Form Requests untuk validasi data (contoh: StoreOrderRequest)
+│   ├── Models/           # Representasi tabel database
+│   └── Services/         # Logika bisnis aplikasi (Service Pattern)
 ├── bootstrap/         # Skrip inisialisasi aplikasi Laravel
 ├── config/            # Konfigurasi aplikasi, database, dan Midtrans
 ├── database/          # File migrasi (migrations) dan seeder database
@@ -44,6 +49,11 @@ kurban_transaksielektronik/
 ├── Dockerfile         # Instruksi build image Docker untuk aplikasi
 └── package.json       # Konfigurasi dependensi frontend (NPM)
 ```
+
+## 🏗️ Arsitektur Kode (Refactoring)
+Aplikasi ini telah menerapkan prinsip pemisahan tanggung jawab (Separation of Concerns) dengan:
+- **Service Pattern**: Logika bisnis kompleks (transaksi database, integrasi Midtrans, pengelolaan file) dipisahkan dari Controller ke dalam `app/Services/` (misal: `OrderService`, `PaymentService`).
+- **Form Requests**: Validasi input dipisahkan ke dalam kelas khusus di `app/Http/Requests/` untuk menjaga agar Controller tetap bersih.
 
 ## 🐳 Cara Menjalankan dan Testing dengan Docker Desktop
 

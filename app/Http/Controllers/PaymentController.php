@@ -4,20 +4,24 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use Illuminate\Http\Request;
+use App\Services\PaymentService;
+use Exception;
 
 class PaymentController extends Controller
 {
-    /**
-     * Display payment form for an order
-     */
+    protected $paymentService;
+
+    public function __construct(PaymentService $paymentService)
+    {
+        $this->paymentService = $paymentService;
+    }
+
     public function show(Order $order)
     {
-        // Check if user is authorized to pay this order
         if (auth()->id() !== $order->user_id && !auth()->user()->isAdmin()) {
             return redirect()->back()->with('error', 'Anda tidak diizinkan mengakses halaman ini.');
         }
 
-        // Check if order is pending
         if ($order->status !== 'menunggu verifikasi') {
             return redirect()->back()->with('error', 'Order ini tidak dapat dibayar.');
         }
@@ -28,125 +32,50 @@ class PaymentController extends Controller
         ]);
     }
 
-    /**
-     * Get Snap token for payment
-     */
     public function getSnapToken(Order $order)
     {
-        // Check authorization
         if (auth()->id() !== $order->user_id && !auth()->user()->isAdmin()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
         try {
-            // Set MidTrans configuration
-            \Midtrans\Config::$serverKey = config('midtrans.server_key');
-            \Midtrans\Config::$isProduction = config('midtrans.is_production');
-            \Midtrans\Config::$isSanitized = config('midtrans.is_sanitized');
-            \Midtrans\Config::$is3ds = config('midtrans.is_3ds');
-
-            // Prepare transaction details
-            $transactionDetails = [
-                'order_id' => 'ORDER-' . $order->id . '-' . time(),
-                'gross_amount' => (int) $order->total_harga,
-            ];
-
-            // Prepare item details
-            $itemDetails = [
-                [
-                    'id' => $order->id,
-                    'price' => (int) $order->total_harga,
-                    'quantity' => 1,
-                    'name' => 'Peserta Kurban - ' . $order->jenis_hewan . ' (' . $order->total_hewan . ' ekor)',
-                ]
-            ];
-
-            // Prepare customer details
-            $customerDetails = [
-                'first_name' => $order->user->name,
-                'email' => $order->user->email,
-                'phone' => $order->user->phone ?? '',
-            ];
-
-            // Prepare payment params
-            $transaction = [
-                'transaction_details' => $transactionDetails,
-                'item_details' => $itemDetails,
-                'customer_details' => $customerDetails,
-                'enable_redirect_url' => true,
-                'redirect_url' => route('payment.callback'),
-                'finish_redirect_url' => route('payment.finish'),
-                'error_redirect_url' => route('payment.error'),
-            ];
-
-            // Get Snap token
-            $snapToken = \Midtrans\Snap::getSnapToken($transaction);
-
-            // Save order_id to allow manual verification later
-            $order->update([
-                'bukti_pembayaran' => json_encode(['order_id' => $transactionDetails['order_id']])
-            ]);
-
-            return response()->json([
-                'snap_token' => $snapToken,
-                'order_id' => $transactionDetails['order_id'],
-            ]);
-        } catch (\Exception $e) {
+            $data = $this->paymentService->getSnapToken($order);
+            return response()->json($data);
+        } catch (Exception $e) {
             return response()->json([
                 'error' => 'Gagal membuat token pembayaran: ' . $e->getMessage()
             ], 500);
         }
     }
 
-    /**
-     * Handle payment callback from MidTrans
-     */
     public function callback(Request $request)
     {
         try {
-            // Set MidTrans configuration
             \Midtrans\Config::$serverKey = config('midtrans.server_key');
             \Midtrans\Config::$isProduction = config('midtrans.is_production');
 
-            // Get notification from MidTrans
             $notif = new \Midtrans\Notification();
-
-            // Get order ID from notification
             $orderId = explode('-', $notif->order_id)[1];
             $order = Order::findOrFail($orderId);
 
-            // Get transaction status from MidTrans
             $transaction = \Midtrans\Transaction::status($notif->order_id);
-
-            // Handle payment status
-            $this->handlePaymentStatus($order, $transaction);
+            $this->paymentService->handlePaymentStatus($order, $transaction);
 
             return response()->json(['status' => 'ok']);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             \Log::error('MidTrans callback error: ' . $e->getMessage());
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
-    /**
-     * Handle payment finish
-     */
     public function finish(Request $request)
     {
-        // Try to verify immediately (useful for Sandbox/Local where webhook can't reach)
         if ($request->has('order_id')) {
             $order = Order::find($request->order_id);
             if ($order && $order->bukti_pembayaran) {
                 try {
-                    \Midtrans\Config::$serverKey = config('midtrans.server_key');
-                    \Midtrans\Config::$isProduction = config('midtrans.is_production');
-                    
-                    $details = json_decode($order->bukti_pembayaran, true);
-                    if (isset($details['order_id'])) {
-                        $transaction = \Midtrans\Transaction::status($details['order_id']);
-                        $this->handlePaymentStatus($order, $transaction);
-                    }
-                } catch (\Exception $e) {
+                    $this->paymentService->verifyPayment($order);
+                } catch (Exception $e) {
                     \Log::error('Manual verify error: ' . $e->getMessage());
                 }
             }
@@ -156,103 +85,23 @@ class PaymentController extends Controller
             ->with('success', 'Transaksi Anda telah diproses. Cek status terbaru di bawah.');
     }
 
-    /**
-     * Handle payment error
-     */
     public function error(Request $request)
     {
         return redirect()->route('peserta.dashboard')
             ->with('error', 'Pembayaran dibatalkan atau gagal.');
     }
 
-    /**
-     * Handle payment status update
-     */
-    private function handlePaymentStatus($order, $transaction)
-    {
-        $transactionStatus = $transaction->transaction_status;
-        $paymentType = $transaction->payment_type ?? null;
-
-        if ($transactionStatus === 'capture') {
-            if ($transaction->fraud_status === 'challenge') {
-                // Still waiting for fraud verification
-                $order->update([
-                    'status' => 'menunggu verifikasi',
-                    'bukti_pembayaran' => json_encode($transaction),
-                ]);
-            } else if ($transaction->fraud_status === 'accept') {
-                // Payment accepted
-                $order->update([
-                    'status' => 'disetujui',
-                    'bukti_pembayaran' => json_encode($transaction),
-                ]);
-            }
-        } else if ($transactionStatus === 'settlement') {
-            // Payment completed
-            $order->update([
-                'status' => 'disetujui',
-                'bukti_pembayaran' => json_encode($transaction),
-            ]);
-            
-            // Fire event for order approved (if listener exists)
-            event(new \App\Events\OrderApproved($order));
-        } else if ($transactionStatus === 'pending') {
-            // Payment pending
-            $order->update([
-                'status' => 'menunggu verifikasi',
-                'bukti_pembayaran' => json_encode($transaction),
-            ]);
-        } else if ($transactionStatus === 'deny') {
-            // Payment denied
-            $order->update([
-                'status' => 'ditolak',
-                'alasan_penolakan' => 'Pembayaran ditolak oleh sistem MidTrans',
-                'bukti_pembayaran' => json_encode($transaction),
-            ]);
-        } else if ($transactionStatus === 'cancel' || $transactionStatus === 'expire') {
-            // Payment canceled or expired
-            $order->update([
-                'status' => 'menunggu verifikasi',
-                'bukti_pembayaran' => null,
-            ]);
-        }
-    }
-
-    /**
-     * Verify payment status
-     */
     public function verify(Order $order)
     {
         try {
-            // Check authorization
             if (auth()->id() !== $order->user_id && !auth()->user()->isAdmin()) {
                 return response()->json(['error' => 'Unauthorized'], 403);
             }
 
-            // Set MidTrans configuration
-            \Midtrans\Config::$serverKey = config('midtrans.server_key');
-            \Midtrans\Config::$isProduction = config('midtrans.is_production');
+            $result = $this->paymentService->verifyPayment($order);
 
-            // Get latest transaction status
-            $transactionDetails = json_decode($order->bukti_pembayaran, true);
-            
-            if ($transactionDetails && isset($transactionDetails['order_id'])) {
-                $transaction = \Midtrans\Transaction::status($transactionDetails['order_id']);
-                
-                // Update order status based on transaction
-                $this->handlePaymentStatus($order, $transaction);
-                
-                // Refresh order
-                $order->refresh();
-
-                return response()->json([
-                    'status' => $order->status,
-                    'message' => $order->getStatusFormattedAttribute(),
-                ]);
-            }
-
-            return response()->json(['error' => 'No transaction found'], 404);
-        } catch (\Exception $e) {
+            return response()->json($result);
+        } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
