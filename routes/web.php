@@ -14,10 +14,13 @@ use App\Http\Controllers\DanaOperasionalController;
 use App\Http\Controllers\DistribusiController;
 use App\Http\Controllers\KetersediaanHewanController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\DeteksiUangController;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::post('/detect-uang', [DeteksiUangController::class, 'detect']);
 
 // Public payment routes
 Route::post('payment/callback', [PaymentController::class, 'callback'])->name('payment.callback');
@@ -47,9 +50,11 @@ Route::middleware(['auth', 'role:peserta_kurban'])
             Route::get('order/{order}/snap-token', [PaymentController::class, 'getSnapToken'])->name('get-snap-token');
             Route::get('verify/{order}', [PaymentController::class, 'verify'])->name('verify');
         });
-        // Optional: custom routes
+        // Download routes
         Route::get('order/{order}/invoice', [OrderController::class, 'invoice'])
             ->name('order.invoice');
+        Route::get('sertifikat/{sertifikat}', [OrderController::class, 'downloadSertifikat'])
+            ->name('sertifikat.download');
     });
 
 Route::middleware(['auth', 'role:admin_kurban'])->group(

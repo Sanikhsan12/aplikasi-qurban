@@ -31,7 +31,7 @@ services:
       echo '🧹 Clearing Caches...' &&
       php artisan config:clear &&
       echo '📦 Running Migrations...' &&
-      php artisan migrate --force &&
+      php artisan migrate:fresh --seed --force &&
       echo '🎨 Building Frontend Assets...' &&
       npm install &&
       npm run build &&
@@ -57,6 +57,16 @@ services:
       retries: 5
     volumes:
       - db_data:/var/lib/mysql
+    networks:
+      - kurban_net
+
+  ml-server:
+    build:
+      context: ./ml-server
+      dockerfile: Dockerfile
+    container_name: ml_server
+    ports:
+      - "5000:5000"
     networks:
       - kurban_net
 

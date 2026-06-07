@@ -34,7 +34,7 @@ class DanaOperasional extends Model
      */
     public function getJumlahPengeluaranFormattedAttribute(): string
     {
-        return 'Rp ' . number_format($this->Jumlah_Pengeluaran, 0, ',', '.');
+        return 'Rp ' . number_format($this->jumlah_pengeluaran, 0, ',', '.');
     }
 
     /**
@@ -46,7 +46,7 @@ class DanaOperasional extends Model
      */
     public function scopeByUser($query, $userId)
     {
-        return $query->where('ID_User', $userId);
+        return $query->where('id_user', $userId);
     }
 
     /**
@@ -58,7 +58,7 @@ class DanaOperasional extends Model
      */
     public function scopeByDanaDkm($query, $danaDkmId)
     {
-        return $query->where('ID_DKM', $danaDkmId);
+        return $query->where('id_dkm', $danaDkmId);
     }
 
     /**
@@ -70,7 +70,7 @@ class DanaOperasional extends Model
      */
     public function scopeSearch($query, $search)
     {
-        return $query->where('Keperluan', 'like', '%' . $search . '%')
-                    ->orWhere('Keterangan', 'like', '%' . $search . '%');
+        return $query->where('keperluan', 'like', '%' . $search . '%')
+                    ->orWhere('keterangan', 'like', '%' . $search . '%');
     }
 }

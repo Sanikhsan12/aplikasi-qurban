@@ -71,6 +71,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const dagingDisplay = document.getElementById('perkiraan_daging_display');
     const hargaDisplay = document.getElementById('total_harga_display');
 
+    // Peserta group (sapi patungan)
+    const pesertaGroup = document.getElementById('peserta-group');
+
     // =============================================
     // 1. NAVBAR FUNCTIONALITY
     // =============================================
@@ -367,6 +370,20 @@ document.addEventListener('DOMContentLoaded', function () {
         if (dagingHidden) dagingHidden.value = perkiraanDaging.toFixed(2);
         if (hargaHidden) hargaHidden.value = totalHarga;
         if (jenisHidden) jenisHidden.value = jenisHewanLower;
+
+        // Toggle peserta group (show only for Sapi)
+        const isSapi = jenisHewanLower === 'sapi';
+        if (pesertaGroup) {
+            pesertaGroup.style.display = isSapi ? 'block' : 'none';
+            // Toggle required attribute for peserta fields
+            for (let i = 2; i <= 7; i++) {
+                const field = document.getElementById('peserta_' + i);
+                if (field) {
+                    field.required = isSapi;
+                    if (!isSapi) field.value = '';
+                }
+            }
+        }
 
         // Update DISPLAY fields
         if (beratDisplay) beratDisplay.value = totalBerat.toFixed(1) + ' kg';

@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Log;
 use App\Models\Order;
+use App\Models\Kontrak;
+use App\Models\Sertifikat;
 use App\Models\Pelaksanaan;
 use Illuminate\Http\Request;
 use App\Models\KetersediaanHewan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class OrderController extends Controller
 {
@@ -37,7 +39,6 @@ class OrderController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    // Di Controller store() method
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -46,6 +47,12 @@ class OrderController extends Controller
             'jenis_hewan' => 'required_if:tipe_pendaftaran,kirim langsung|string|max:100',
             'berat_kirim' => 'required_if:tipe_pendaftaran,kirim langsung|numeric|min:1',
             'total_hewan' => 'required|integer|min:1|max:1',
+            'peserta_2' => 'nullable|string|max:255',
+            'peserta_3' => 'nullable|string|max:255',
+            'peserta_4' => 'nullable|string|max:255',
+            'peserta_5' => 'nullable|string|max:255',
+            'peserta_6' => 'nullable|string|max:255',
+            'peserta_7' => 'nullable|string|max:255',
         ]);
 
         DB::beginTransaction();
@@ -70,6 +77,8 @@ class OrderController extends Controller
                     : 'disetujui',
             ];
 
+            $jenisHewan = null;
+
             /** 3. LOGIKA TRANSFER */
             if ($validated['tipe_pendaftaran'] === 'transfer') {
 
@@ -80,13 +89,15 @@ class OrderController extends Controller
                         ->with('error', 'Stok hewan tidak mencukupi.');
                 }
 
+                $jenisHewan = $hewan->jenis_hewan;
+
                 $data += [
                     'ketersediaan_hewan_id' => $hewan->id,
-                    'jenis_hewan' => $hewan->jenis_hewan,
+                    'jenis_hewan' => $jenisHewan,
                     'berat_hewan' => $hewan->bobot,
                     'perkiraan_daging' => $hewan->bobot * 0.4,
                     'total_harga' => $hewan->harga,
-                    'bank_id' => null, // Midtrans will handle payment channels
+                    'bank_id' => null,
                 ];
 
                 $hewan->decrement('jumlah');
@@ -94,19 +105,49 @@ class OrderController extends Controller
 
             /** 4. LOGIKA KIRIM LANGSUNG */
             else {
+                $jenisHewan = $validated['jenis_hewan'];
+
                 $data += [
                     'ketersediaan_hewan_id' => null,
                     'bank_id' => null,
                     'bukti_pembayaran' => null,
-                    'jenis_hewan' => $validated['jenis_hewan'],
+                    'jenis_hewan' => $jenisHewan,
                     'berat_hewan' => $validated['berat_kirim'],
                     'perkiraan_daging' => $validated['berat_kirim'] * 0.4,
                     'total_harga' => 0,
                 ];
             }
 
-            /** 5. SIMPAN ORDER */
+            /** 5. Validasi peserta SAPI */
+            $isSapi = strcasecmp($jenisHewan, 'Sapi') === 0;
+
+            if ($isSapi) {
+                for ($i = 2; $i <= 7; $i++) {
+                    $namaField = "peserta_{$i}";
+                    if (empty($validated[$namaField])) {
+                        return back()->withInput()
+                            ->with('error', "Nama peserta {$i} wajib diisi untuk hewan Sapi.");
+                    }
+                }
+            }
+
+            /** 6. SIMPAN ORDER */
             $order = Order::create($data);
+
+            /** 7. SIMPAN PESERTA */
+            $order->peserta()->create([
+                'nama_peserta' => auth()->user()->name,
+                'is_buyer' => true,
+            ]);
+
+            if ($isSapi) {
+                for ($i = 2; $i <= 7; $i++) {
+                    $order->peserta()->create([
+                        'nama_peserta' => $validated["peserta_{$i}"],
+                        'is_buyer' => false,
+                    ]);
+                }
+            }
 
             DB::commit();
 
@@ -173,11 +214,10 @@ class OrderController extends Controller
         DB::beginTransaction();
         try {
             $order->update([
-                'status' => 'disetujui', // Match dengan ENUM value
+                'status' => 'disetujui',
                 'alasan_penolakan' => $request->alasan_penolakan,
                 'verified_at' => now(),
                 'verified_by' => auth()->id(),
-                'alasan_penolakan' => $request->alasan_penolakan,
                 'rejected_at' => null,
                 'rejected_by' => null,
             ]);
@@ -215,11 +255,10 @@ class OrderController extends Controller
             }
 
             $order->update([
-                'status' => 'ditolak', // Match dengan ENUM value
+                'status' => 'ditolak',
                 'alasan_penolakan' => $request->alasan_penolakan,
                 'rejected_at' => now(),
                 'rejected_by' => auth()->id(),
-                'verification_note' => null,
                 'verified_at' => null,
                 'verified_by' => null,
             ]);
@@ -273,5 +312,51 @@ class OrderController extends Controller
             ->paginate(10);
 
         return view('admin/order/rejected', compact('orders', 'user'));
+    }
+
+    public function invoice(Order $order)
+    {
+        $kontrak = $order->kontrak;
+
+        if ($kontrak && $kontrak->file_path) {
+            $path = storage_path('app/public/' . $kontrak->file_path);
+
+            if (file_exists($path)) {
+                return response()->download($path, 'kontrak_' . $order->id . '.pdf');
+            }
+        }
+
+        $pelaksanaan = Pelaksanaan::find($order->pelaksanaan_id);
+        $peserta = $order->peserta;
+
+        $pdf = Pdf::loadView('pdf.invoice', [
+            'order' => $order,
+            'pelaksanaan' => $pelaksanaan,
+            'peserta' => $peserta,
+        ]);
+
+        return $pdf->download('invoice_' . $order->id . '.pdf');
+    }
+
+    public function downloadSertifikat(Sertifikat $sertifikat)
+    {
+        if ($sertifikat->file_path) {
+            $path = storage_path('app/public/' . $sertifikat->file_path);
+
+            if (file_exists($path)) {
+                return response()->download($path, 'sertifikat_' . $sertifikat->id . '.pdf');
+            }
+        }
+
+        $order = $sertifikat->order;
+        $pelaksanaan = Pelaksanaan::find($order->pelaksanaan_id);
+
+        $pdf = Pdf::loadView('pdf.sertifikat', [
+            'sertifikat' => $sertifikat,
+            'order' => $order,
+            'pelaksanaan' => $pelaksanaan,
+        ]);
+
+        return $pdf->download('sertifikat_' . $sertifikat->id . '.pdf');
     }
 }

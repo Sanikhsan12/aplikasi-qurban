@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Sertifikat;
 use App\Models\Penyembelihan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class PenyembelihanController extends Controller
 {
@@ -61,6 +63,8 @@ class PenyembelihanController extends Controller
                 ]);
             }
 
+            $this->generateSertifikat($penyembelihan);
+
             // Perbaiki route redirect
             return redirect()->back()
                 ->with('success', 'Status penyembelihan berhasil diupdate!');
@@ -99,7 +103,10 @@ class PenyembelihanController extends Controller
         try {
             $penyembelihan = Penyembelihan::findOrFail($id);
 
-            $data = ['status' => $request->status];
+            $wasTersembelih = $penyembelihan->isTersembelih();
+            $newStatus = $request->status;
+
+            $data = ['status' => $newStatus];
 
             // Upload file jika ada
             if ($request->hasFile('dokumentasi_penyembelihan')) {
@@ -116,12 +123,61 @@ class PenyembelihanController extends Controller
 
             $penyembelihan->update($data);
 
-            // Perbaiki route redirect
+            if (!$wasTersembelih && $newStatus === 'tersembelih') {
+                $this->generateSertifikat($penyembelihan);
+            }
+
             return redirect()->back()
                 ->with('success', 'Data penyembelihan berhasil diupdate!');
         } catch (\Exception $e) {
             return redirect()->back()
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+
+    protected function generateSertifikat(Penyembelihan $penyembelihan)
+    {
+        $order = $penyembelihan->order;
+        $pesertaList = $order->peserta;
+
+        $pelaksanaan = $penyembelihan->pelaksanaan;
+        $tanggalSembelih = $pelaksanaan && $pelaksanaan->Penyembelihan
+            ? \Carbon\Carbon::parse($pelaksanaan->Penyembelihan)
+            : now();
+
+        foreach ($pesertaList as $index => $peserta) {
+            $nomorSertifikat = 'SERT/' . now()->format('Y/m/')
+                . str_pad($order->id, 4, '0', STR_PAD_LEFT) . '/'
+                . str_pad($index + 1, 2, '0', STR_PAD_LEFT);
+
+            $sertifikat = Sertifikat::create([
+                'order_id' => $order->id,
+                'penyembelihan_id' => $penyembelihan->id,
+                'order_peserta_id' => $peserta->id,
+                'nomor_sertifikat' => $nomorSertifikat,
+                'nama_peserta' => $peserta->nama_peserta,
+                'jenis_hewan' => $order->jenis_hewan,
+                'tanggal_penyembelihan' => $tanggalSembelih->toDateString(),
+            ]);
+
+            try {
+                $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.sertifikat', [
+                    'sertifikat' => $sertifikat,
+                    'order' => $order,
+                    'pelaksanaan' => $pelaksanaan,
+                ]);
+
+                $filename = 'sertifikat_' . $sertifikat->id . '_' . time() . '.pdf';
+                $path = 'sertifikat/' . $filename;
+                $pdf->save(storage_path('app/public/' . $path));
+
+                $sertifikat->update(['file_path' => $path]);
+            } catch (\Throwable $e) {
+                \Log::error('Generate Sertifikat Error', [
+                    'sertifikat_id' => $sertifikat->id,
+                    'message' => $e->getMessage(),
+                ]);
+            }
         }
     }
 
@@ -169,6 +225,6 @@ class PenyembelihanController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('admin/penyembelihan/menunggu', compact('penyembelihan'));
+        return view('admin/penyembelihan/tersembelih', compact('penyembelihan'));
     }
 }

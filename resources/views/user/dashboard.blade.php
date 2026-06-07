@@ -217,6 +217,20 @@
                             <input type="text" id="total_harga_display" class="input" readonly>
                         </div>
 
+                        {{-- PESERTA PATUNGAN (SAPI) --}}
+                        <div id="peserta-group" style="display:none;">
+                            <div class="form-group">
+                                <label><strong>Peserta Patungan (Sapi)</strong></label>
+                                <p class="muted" style="font-size:12px;">Satu sapi untuk 7 orang. Nama pembeli otomatis menjadi peserta 1. Isi 6 nama peserta lainnya.</p>
+                            </div>
+                            @for ($i = 2; $i <= 7; $i++)
+                                <div class="form-group">
+                                    <label>Peserta {{ $i }}</label>
+                                    <input type="text" name="peserta_{{ $i }}" id="peserta_{{ $i }}" class="input"
+                                        placeholder="Nama peserta {{ $i }}" value="{{ old("peserta_{$i}") }}">
+                                </div>
+                            @endfor
+                        </div>
 
                         {{-- SUBMIT --}}
                         <div class="actions">
@@ -343,6 +357,20 @@
                                                 <a href="{{ route('peserta.payment.show', $row->id) }}" class="btn btn-primary w-100 mb-2" style="background-color: var(--primary); border-color: var(--primary);">
                                                     <i class="fas fa-credit-card me-2"></i> Lanjutkan Pembayaran
                                                 </a>
+                                            @endif
+
+                                            @if ($row->status === 'disetujui' && $row->kontrak)
+                                                <a href="{{ route('peserta.order.invoice', $row->id) }}" class="btn btn-outline-success w-100 mb-2" style="border-color: #28a745; color: #28a745;">
+                                                    <i class="fas fa-file-contract me-2"></i> Download Surat Kontrak
+                                                </a>
+                                            @endif
+
+                                            @if ($row->sertifikat && $row->sertifikat->count() > 0)
+                                                @foreach ($row->sertifikat as $sertifikat)
+                                                    <a href="{{ route('peserta.sertifikat.download', $sertifikat->id) }}" class="btn btn-outline-info w-100 mb-2" style="border-color: #17a2b8; color: #17a2b8;">
+                                                        <i class="fas fa-award me-2"></i> Download Sertifikat {{ $row->sertifikat->count() > 1 ? '- ' . $sertifikat->nama_peserta : '' }}
+                                                    </a>
+                                                @endforeach
                                             @endif
                                             
                                             @if ($row->bukti_pembayaran && !json_decode($row->bukti_pembayaran))

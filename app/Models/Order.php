@@ -24,9 +24,11 @@ class Order extends Model
         'bukti_pembayaran',
         'status',
         'alasan_penolakan',
+        'verified_at',
+        'verified_by',
+        'rejected_at',
+        'rejected_by',
     ];
-
-
 
     protected $casts = [
         'total_harga' => 'decimal:2',
@@ -56,6 +58,30 @@ class Order extends Model
         return $this->hasOne(DanaDKM::class);
     }
 
+    public function peserta()
+    {
+        return $this->hasMany(OrderPeserta::class);
+    }
+
+    public function kontrak()
+    {
+        return $this->hasOne(Kontrak::class);
+    }
+
+    public function sertifikat()
+    {
+        return $this->hasMany(Sertifikat::class);
+    }
+
+    public function verifier()
+    {
+        return $this->belongsTo(User::class, 'verified_by');
+    }
+
+    public function rejector()
+    {
+        return $this->belongsTo(User::class, 'rejected_by');
+    }
 
     // Accessors
     public function getTotalHargaFormattedAttribute()
